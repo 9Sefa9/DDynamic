@@ -15,7 +15,6 @@ public class Main extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(true);
         primaryStage.setTitle("DDynamic v1.0");
         primaryStage.show();
     }
