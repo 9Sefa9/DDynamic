@@ -3,6 +3,7 @@ package controller;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -17,7 +18,7 @@ import java.awt.event.ActionEvent;
 public class Controller {
 
     @FXML
-    public TextFlow textFlow;
+    public TextArea consoleArea;
 
     @FXML
     public TextField inputField;
@@ -46,7 +47,7 @@ public class Controller {
                 inputText = this.inputField.getText();
                 this.model.commandList.add(inputText);
                 this.text.setText(inputText);
-                this.textFlow.getChildren().add(this.text);
+                this.consoleArea.setText(this.text.getText()+"\n");
                 break;
             }
             case "UP":{
