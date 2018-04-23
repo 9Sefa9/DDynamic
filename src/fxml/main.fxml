@@ -6,7 +6,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="489.0" prefWidth="472.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <children>
-      <TextArea fx:id="consoleArea" editable="false" layoutX="25.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" />
-      <TextField fx:id="inputField" layoutX="25.0" layoutY="429.0" onKeyPressed="#handleInputField" prefHeight="25.0" prefWidth="410.0" />
+      <TextArea fx:id="consoleArea" editable="false" layoutX="25.0" layoutY="32.0" prefHeight="380.0" prefWidth="420.0" />
+      <TextField fx:id="inputField" layoutX="25.0" layoutY="429.0" onKeyPressed="#handleInputField" prefHeight="25.0" prefWidth="420.0" />
    </children>
 </Pane>
