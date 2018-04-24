@@ -27,6 +27,7 @@ public class Controller {
 
     public Model model;
     private String inputText;
+    private int upAndDownIndex = 0;
     public void initialize() {
         //setze konsolen-text style
             model = new Model();
@@ -47,13 +48,25 @@ public class Controller {
                 inputText = this.inputField.getText();
                 this.model.commandList.add(inputText);
                 this.text.setText(inputText);
-                this.consoleArea.setText(this.text.getText()+"\n");
+                this.consoleArea.appendText((this.model.commandList.size()-1)+"| "+this.text.getText()+"\n");
+                upAndDownIndex = this.model.commandList.size()-1;
+                this.inputField.clear();
                 break;
             }
             case "UP":{
+                if(!this.model.commandList.isEmpty()) {
+                    this.inputField.setText(this.model.commandList.get(this.upAndDownIndex).toString());
+                    if (this.upAndDownIndex != 0)
+                        this.upAndDownIndex -= 1;
+                }
                 break;
             }
             case "DOWN":{
+                if(!this.model.commandList.isEmpty()) {
+                    this.inputField.setText(this.model.commandList.get(this.upAndDownIndex).toString());
+                    if (this.upAndDownIndex != this.model.commandList.size() - 1)
+                        this.upAndDownIndex += 1;
+                }
                 break;
             }
             default: {
