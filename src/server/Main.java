@@ -37,9 +37,10 @@ class InnerThread extends Thread{
         try{
             dos = new DataOutputStream(client.getOutputStream());
             dis = new DataInputStream(client.getInputStream());
-
             System.out.println("SOCKET :: /"+client.getRemoteSocketAddress()+" has been connected!");
-
+            if(client.isClosed()){
+                System.out.print(client.isClosed());
+            }
         }catch (IOException e){
             e.printStackTrace();
         }
