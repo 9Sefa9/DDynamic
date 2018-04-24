@@ -30,7 +30,7 @@ public class Controller {
     private int upAndDownIndex = 0;
     public void initialize() {
         //setze konsolen-text style
-            model = new Model();
+            model = new Model(this);
             consoleTextProperties();
     }
     private void consoleTextProperties(){
@@ -48,9 +48,10 @@ public class Controller {
                 inputText = this.inputField.getText();
                 this.model.commandList.add(inputText);
                 this.text.setText(inputText);
-                this.consoleArea.appendText((this.model.commandList.size()-1)+"| "+this.text.getText()+"\n");
+                this.consoleArea.appendText(this.text.getText()+"\n");
                 upAndDownIndex = this.model.commandList.size()-1;
                 this.inputField.clear();
+                model.processCommand(inputText.split(" "));
                 break;
             }
             case "UP":{
