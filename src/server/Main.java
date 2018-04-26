@@ -15,15 +15,16 @@ public class Main{
     public Main(){
         try{
             server= new ServerSocket(3121);
+            System.err.println("SERVER STARTED");
             while(true){
                 client = server.accept();
-                new InnerThread(client).start();
+                new InnerThread(client  ).start();
+                Thread.sleep(500);
             }
-        }catch (IOException e){
+        }catch (IOException | InterruptedException e){
             e.printStackTrace();
         }
     }
-
 }
 class InnerThread extends Thread{
     private Socket client;
@@ -38,8 +39,17 @@ class InnerThread extends Thread{
             dos = new DataOutputStream(client.getOutputStream());
             dis = new DataInputStream(client.getInputStream());
             System.out.println("SOCKET :: /"+client.getRemoteSocketAddress()+" has been connected!");
-            if(client.isClosed()){
-                System.out.print(client.isClosed());
+
+            String[] clientMsg = dis.readUTF().split(" ");
+            switch(clientMsg[0]){
+                case "server.sendFile":{
+
+                    break;
+                }
+                case "server.receiveFile":{
+
+                    break;
+                }
             }
         }catch (IOException e){
             e.printStackTrace();

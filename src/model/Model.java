@@ -4,10 +4,9 @@ import controller.Controller;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.text.Text;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class Model{
@@ -24,19 +23,46 @@ public class Model{
 
     public void processCommand(String[] commandArguments) {
         switch(commandArguments[0]){
-            case "createConnection":{
-                createConnection(commandArguments[1],commandArguments[2]);
+            case "client.createConnection":{
+                clientCreateConnection(commandArguments[1],commandArguments[2]);
                 break;
             }
-            case "closeConnection":{
-                closeConnection();
+            case "client.closeConnection":{
+                clientCloseConnection();
                 break;
             }
-            default: this.controller.consoleArea.appendText("ERROR!\n");
+            case "server.sendFile":{
+                serverSendFile(commandArguments[1],commandArguments[2]);
+                break;
+            }
+            case "clear":{
+                clearConsole();
+                break;
+            }
+            default:{
+                this.controller.consoleArea.appendText("Command not found!\n");
+            }
 
         }
     }
-    private void createConnection(String ip, String port) {
+
+    private void serverSendFile(String clientFilePath, String serverFilePath) {
+        if(!socket.isClosed()){
+            try{
+                int bufferSize = (int) new FileInputStream(clientFilePath).getChannel().size();
+                byte[] buffer = new byte[bufferSize];
+                whi
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void clearConsole() {
+        this.controller.consoleArea.clear();
+    }
+
+    private void clientCreateConnection(String ip, String port) {
         try{
             socket = new Socket(ip,Integer.parseInt(port));
             dos = new DataOutputStream(socket.getOutputStream());
@@ -48,7 +74,7 @@ public class Model{
             Platform.runLater(()->{this.controller.consoleArea.appendText("No Connection found!\n");});
         }
     }
-    private void closeConnection() {
+    private void clientCloseConnection() {
         try{
             this.socket.close();
             Platform.runLater(()->{this.controller.consoleArea.appendText("Connection closed!\n");});
