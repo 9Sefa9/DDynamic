@@ -60,23 +60,24 @@ class InnerThread extends Thread{
 
     private void clientSendFile(String[] clientMsg) {
         FileOutputStream fos=null;
+        DataOutputStream dos2 = null;
         try{
             fos= new FileOutputStream(clientMsg[2]);
+            dos2 = new DataOutputStream(fos);
             int incomingFileSize = dis.readInt();
             int tmp;
             byte[] buffer = new byte[incomingFileSize];
             while((tmp = dis.read(buffer)) != -1){
-                fos.write(buffer,0,tmp);
-                fos.flush();
+                dos2.write(buffer,0,tmp);
             }
-            if(fos!=null)
-                fos.close();
+
             System.out.println("Receiving done.");
         }catch (IOException e){
             e.printStackTrace();
         }finally {
             try{
-
+                if(fos!=null)
+                    fos.close();
             }catch (Exception e){
                 e.printStackTrace();
             }

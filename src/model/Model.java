@@ -67,15 +67,19 @@ public class Model{
                 int tmp;
                 while((tmp = fis.read(buffer))!= -1){
                     dos.write(buffer,0,tmp);
-                    dos.flush();
                 }
-                if (fis!= null)
-                    fis.close();
 
                 System.out.println("Sending done.");
             }catch (IOException e){
                 e.printStackTrace();
-            }
+            }finally {
+                try {
+                    if (fis != null)
+                        fis.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                }
         }
     }
 
