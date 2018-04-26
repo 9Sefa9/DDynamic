@@ -31,8 +31,9 @@ public class Model{
                 clientCloseConnection();
                 break;
             }
-            case "server.sendFile":{
-                serverSendFile(commandArguments[1],commandArguments[2]);
+            case "client.sendFile":{
+                //ObjectOutputStream zu aufwendig!
+                serverSendFile(commandArguments[0],commandArguments[1],commandArguments[2]);
                 break;
             }
             case "clear":{
@@ -46,12 +47,32 @@ public class Model{
         }
     }
 
-    private void serverSendFile(String clientFilePath, String serverFilePath) {
+    private void serverSendFile(String command, String clientFilePath, String serverFilePath) {
+
         if(!socket.isClosed()){
+            FileInputStream fis = null;
             try{
-                int bufferSize = (int) new FileInputStream(clientFilePath).getChannel().size();
+
+                fis = new FileInputStream(clientFilePath);
+                int bufferSize = (int) fis.getChannel().size();
+                dos.writeUTF(command+" "+clientFilePath+" "+serverFilePath);
+                dos.flush();
+
+                dos.writeInt(bufferSize);
+                dos.flush();
+
+
+
                 byte[] buffer = new byte[bufferSize];
-                whi
+                int tmp;
+                while((tmp = fis.read(buffer))!= -1){
+                    dos.write(buffer,0,tmp);
+                    dos.flush();
+                }
+                if (fis!= null)
+                    fis.close();
+
+                System.out.println("Sending done.");
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -64,7 +85,7 @@ public class Model{
 
     private void clientCreateConnection(String ip, String port) {
         try{
-            socket = new Socket(ip,Integer.parseInt(port));
+            socket = new Socket(ip+"",Integer.parseInt(port));
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
             Platform.runLater(()->{this.controller.consoleArea.appendText("Connection Successful!\n");});
