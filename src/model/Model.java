@@ -52,7 +52,7 @@ public class Model{
         if(!socket.isClosed()) {
             FileInputStream fis = null;
             try {
-
+                dos = new DataOutputStream(socket.getOutputStream());
                 fis = new FileInputStream(clientFilePath);
                 long bufferSize = fis.getChannel().size();
                 dos.writeUTF(command + " " + clientFilePath + " " + serverFilePath);
@@ -70,6 +70,7 @@ public class Model{
                 }
 
                 System.out.println("Sending done.");
+                Platform.runLater(()->{this.controller.consoleArea.appendText("Sending done."+"\n");});
             } catch (IOException e) {
                 e.printStackTrace();
             }finally{
@@ -90,12 +91,9 @@ public class Model{
     private void clearConsole() {
         this.controller.consoleArea.clear();
     }
-
     private void clientCreateConnection(String ip, String port) {
         try{
             socket = new Socket(ip+"",Integer.parseInt(port));
-            dos = new DataOutputStream(socket.getOutputStream());
-            dis = new DataInputStream(socket.getInputStream());
             Platform.runLater(()->{this.controller.consoleArea.appendText("Connection Successful!\n");});
 
 

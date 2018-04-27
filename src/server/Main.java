@@ -38,7 +38,6 @@ class InnerThread extends Thread{
     public void run() {
 
         try{
-            dos = new DataOutputStream(client.getOutputStream());
             dis = new DataInputStream(client.getInputStream());
             System.out.println("SOCKET :: /"+client.getRemoteSocketAddress()+" has been connected!");
 
@@ -55,6 +54,13 @@ class InnerThread extends Thread{
             }
         }catch (IOException e){
             e.printStackTrace();
+        }finally {
+            try {
+                if (dis != null)
+                    dis.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -62,6 +68,7 @@ class InnerThread extends Thread{
         FileOutputStream fos=null;
         DataOutputStream dos2 = null;
         try{
+            dos = new DataOutputStream(client.getOutputStream());
             fos= new FileOutputStream(clientMsg[2]);
             dos2 = new DataOutputStream(fos);
             long incomingFileSize = dis.readLong();
@@ -72,18 +79,24 @@ class InnerThread extends Thread{
                 dos2.flush();
                 System.out.println(tmp);
             }
-
             System.out.println("Receiving done.");
+
         }catch (IOException e){
             e.printStackTrace();
         }finally {
             try{
-                if(fos!=null)
-                    fos.close();
+
                 if(dos2!=null)
                     dos2.close();
+
+                if(fos!=null)
+                    fos.close();
+
                 if(dos!=null)
                     dos.close();
+
+                if(dos2!=null)
+                    dos2.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
