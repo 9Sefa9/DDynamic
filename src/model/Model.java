@@ -49,37 +49,41 @@ public class Model{
 
     private void serverSendFile(String command, String clientFilePath, String serverFilePath) {
 
-        if(!socket.isClosed()){
+        if(!socket.isClosed()) {
             FileInputStream fis = null;
-            try{
+            try {
 
                 fis = new FileInputStream(clientFilePath);
-                int bufferSize = (int) fis.getChannel().size();
-                dos.writeUTF(command+" "+clientFilePath+" "+serverFilePath);
+                long bufferSize = fis.getChannel().size();
+                dos.writeUTF(command + " " + clientFilePath + " " + serverFilePath);
                 dos.flush();
 
-                dos.writeInt(bufferSize);
+                dos.writeLong(bufferSize);
                 dos.flush();
 
 
-
-                byte[] buffer = new byte[bufferSize];
+                byte[] buffer = new byte[(int)bufferSize + 8192];
                 int tmp;
-                while((tmp = fis.read(buffer))!= -1){
-                    dos.write(buffer,0,tmp);
+                while ((tmp = fis.read(buffer))!=-1) {
+                    dos.write(buffer, 0, tmp);
+                    //dos.flush();
                 }
 
                 System.out.println("Sending done.");
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                try {
-                    if (fis != null)
+            }finally{
+                try{
+                    if(fis!=null)
                         fis.close();
+                    if(dos!=null)
+                        dos.close();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                }
+            }
+        }else{
+            this.controller.consoleArea.appendText("Connection problems!\n");
         }
     }
 

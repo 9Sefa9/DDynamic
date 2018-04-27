@@ -64,11 +64,13 @@ class InnerThread extends Thread{
         try{
             fos= new FileOutputStream(clientMsg[2]);
             dos2 = new DataOutputStream(fos);
-            int incomingFileSize = dis.readInt();
+            long incomingFileSize = dis.readLong();
             int tmp;
-            byte[] buffer = new byte[incomingFileSize];
-            while((tmp = dis.read(buffer)) != -1){
+            byte[] buffer = new byte[(int)incomingFileSize + 8192];
+            while((tmp = dis.read(buffer)) !=-1){
                 dos2.write(buffer,0,tmp);
+                dos2.flush();
+                System.out.println(tmp);
             }
 
             System.out.println("Receiving done.");
@@ -78,6 +80,10 @@ class InnerThread extends Thread{
             try{
                 if(fos!=null)
                     fos.close();
+                if(dos2!=null)
+                    dos2.close();
+                if(dos!=null)
+                    dos.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
