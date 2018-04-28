@@ -1,9 +1,6 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -48,9 +45,10 @@ class InnerThread extends Thread{
                     break;
                 }
                 case "client.receiveFile":{
-
+                    clientReceiveFile(clientMsg[2]);
                     break;
                 }
+
             }
         }catch (IOException e){
             e.printStackTrace();
@@ -58,6 +56,41 @@ class InnerThread extends Thread{
             try {
                 if (dis != null)
                     dis.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void clientReceiveFile(String filePath) {
+        FileInputStream fis=null;
+
+        try{
+            dos = new DataOutputStream(client.getOutputStream());
+            fis= new FileInputStream(filePath);
+
+            long fileSize =fis.getChannel().size();
+            dos.writeLong(fileSize);
+            dos.flush();
+
+            int tmp;
+            byte[] buffer = new byte[(int)fileSize + 8192];
+            while((tmp = fis.read(buffer)) !=-1){
+                dos.write(buffer,0,tmp);
+            }
+            System.out.println("Sending done.");
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try{
+
+                if(dos!=null)
+                    dos.close();
+
+                if(fis!=null)
+                    fis.close();
+
             }catch (Exception e){
                 e.printStackTrace();
             }

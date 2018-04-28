@@ -1,10 +1,11 @@
 .text-area {
     -fx-font-family: Consolas;
     -fx-font-size: 18;
-    -fx-text-fill: yellow;
+    -fx-text-fill: rgba(33, 233, 0, 0.95);
+
     -fx-display-caret:true;
 }
 
 .text-area .content {
-    -fx-background-color: grey;
+    -fx-background-color: #888689;
 }

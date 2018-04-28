@@ -36,14 +36,72 @@ public class Model{
                 serverSendFile(commandArguments[0],commandArguments[1],commandArguments[2]);
                 break;
             }
+            case "client.receiveFile":{
+                serverReceiveFile(commandArguments[0],commandArguments[1],commandArguments[2]);
+                break;
+            }
+            case "help":{
+                this.controller.consoleArea.appendText("client.createConnection <IP> <PORTNUMBER>\n");
+                this.controller.consoleArea.appendText("client.receiveFile <HISPATH> <YOURPATH>\n");
+                this.controller.consoleArea.appendText("client.sendFile <YOURPATH> <HISPATH>\n");
+                this.controller.consoleArea.appendText("client.closeConnection\n");
+                break;
+            }
             case "clear":{
                 clearConsole();
                 break;
             }
             default:{
-                this.controller.consoleArea.appendText("Command not found!\n");
+                this.controller.consoleArea.appendText("# Command not found!\n");
             }
 
+        }
+    }
+
+    private void serverReceiveFile(String command, String serverFilePath, String clientFilePath) {
+        FileOutputStream fos=null;
+        DataOutputStream dosLocal = null;
+        try{
+            dos = new DataOutputStream(this.socket.getOutputStream());
+            dis = new DataInputStream(this.socket.getInputStream());
+
+            fos= new FileOutputStream(clientFilePath);
+            dosLocal = new DataOutputStream(fos);
+
+            dos.writeUTF(command + " " + clientFilePath + " " + serverFilePath);
+            dos.flush();
+
+            long incomingFileSize = dis.readLong();
+            int tmp;
+            byte[] buffer = new byte[(int)incomingFileSize + 8192];
+            while((tmp = dis.read(buffer)) !=-1){
+                dosLocal.write(buffer,0,tmp);
+                dosLocal.flush();
+            }
+            Platform.runLater(()->{this.controller.consoleArea.appendText("Receiving done."+"\n");});
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try{
+                if(dosLocal!=null)
+                    dosLocal.close();
+                if(dos!=null)
+                    dos.close();
+
+                if(dis!=null)
+                    dis.close();
+
+                if(fos!=null)
+                    fos.close();
+
+
+
+                if(dosLocal!=null)
+                    dosLocal.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -55,6 +113,7 @@ public class Model{
                 dos = new DataOutputStream(socket.getOutputStream());
                 fis = new FileInputStream(clientFilePath);
                 long bufferSize = fis.getChannel().size();
+
                 dos.writeUTF(command + " " + clientFilePath + " " + serverFilePath);
                 dos.flush();
 
@@ -103,8 +162,11 @@ public class Model{
     }
     private void clientCloseConnection() {
         try{
-            this.socket.close();
-            Platform.runLater(()->{this.controller.consoleArea.appendText("Connection closed!\n");});
+            if(!this.socket.isClosed()) {
+                this.socket.close();
+                Platform.runLater(()->{this.controller.consoleArea.appendText("Connection closed!\n");});
+            }
+            else Platform.runLater(()->{this.controller.consoleArea.appendText("Connection already closed!\n");});
         }catch(Exception e){
             e.printStackTrace();
         }
